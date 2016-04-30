@@ -345,8 +345,7 @@ class ServiceFlightContract(TypedStaffContract):
         return notes + super(ServiceFlightContract, self).get_synopsis_notes()
 
     def get_rewards(self):
-        dist = utils.distance(self.from_loc, self.to_loc)
-        reward = 8 * dist
+        reward = 20 * utils.distance(self.from_loc, self.to_loc)
         return (0.2 * reward, 0.8 * reward, 0, 2)
 
     def get_data(self):
@@ -505,11 +504,11 @@ class CharterFlightContract(PassengersContract):
     max_simultaneous = 2
     approx_launch_cost = 30000
     agent = 'Kerbin Charter Jets'
-    passengers_number = (8, 16) # for random selection (min included, max excluded)
+    passengers_number = (8, 17) # for random selection (min included, max excluded)
 
     def get_rewards(self):
         dist = utils.distance(self.from_loc, self.to_loc)
-        return ('{} * @/passengersNum'.format(1.15 * dist), 0, 2, 4)
+        return ('{} * @/passengersNum'.format(1.5 * dist), 0, 2, 4)
 
     def make_additional_crew_parameters(self):
         return make_options_group('Has at least one of these crew members', [
@@ -524,11 +523,11 @@ class CommercialFlightContract(PassengersContract):
     max_simultaneous = 2
     approx_launch_cost = 90000
     agent = 'Kerbin BlueSky Airlines'
-    passengers_number = (24, 64) # for random selection (min included, max excluded)
+    passengers_number = (24, 65) # for random selection (min included, max excluded)
 
     def get_rewards(self):
         dist = utils.distance(self.from_loc, self.to_loc)
-        half_reward = '{} * @/passengersNum'.format(0.8 * dist)
+        half_reward = '{} * @/passengersNum'.format(0.6 * dist)
         return (half_reward, half_reward, 3, 5)
 
     def make_additional_crew_parameters(self):
