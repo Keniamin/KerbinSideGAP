@@ -1,0 +1,50 @@
+Class,Departure,Destination,Distance,Min reward,Max reward
+ServiceFlightContract,Green Peaks,Round Range,262.57,7251,8181
+CharterFlightContract,Old KSC,Green Coast,434.2,11210,17972
+CharterFlightContract,Coaler Crater,Kerman Lake,419.94,11039,17608
+BusinessFlightContract,Polar Research Centre,KKVLA,770.07,15000,17250
+CharterFlightContract,Lodnie Isles,Lushlands,313.67,9764,14898
+ServiceFlightContract,Sea's End,Goldpool,699.49,15989,17968
+ServiceFlightContract,Dundard's Edge,Polar Research Centre,423.18,10463,11779
+BusinessFlightContract,Kerman Lake,Sea's End,1461.23,24000,27599
+CommercialFlightContract,Round Range,Lushlands,767.1,40092,85021
+CommercialFlightContract,Green Coast,Lake Dermal,670.12,37299,76889
+ServiceFlightContract,Kerbin's Heart Science Centre,Lodnie Isles,407.98,10159,11438
+CommercialFlightContract,Green Coast,Sanctuary Mouth,1436.65,59375,141163
+CommercialFlightContract,South Hope,Round Range,843.86,42303,91458
+CommercialFlightContract,Sanctuary Mouth,Lodnie Isles,506.48,32586,63168
+BusinessFlightContract,Guardian's Basin,Jeb's island resort,389.54,9000,10350
+ServiceFlightContract,Black Krags,Kerbal Space Centre,181.05,5620,6355
+CharterFlightContract,South Point,Round Range,693.34,14320,24580
+TouristGroupFlightContract,Ben Bay,Guardian's Basin,330.76,11000,12994
+CommercialFlightContract,Sanctuary Mouth,Lake Dermal,767.66,40108,85068
+ServiceFlightContract,South Pole Station,Sea's End,561.47,13229,14876
+ServiceFlightContract,Donby Hole,Kerbin's Heart Science Centre,484.47,11689,13152
+ServiceFlightContract,KKVLA,Arakebo,496.76,11935,13427
+CharterFlightContract,Lake Dermal,Coaler Crater,240.81,8889,13040
+ServiceFlightContract,Kerbin's Bottom,The Shelf,177.83,5556,6283
+ServiceFlightContract,Dull Spot,Old KSC,488.18,11763,13235
+CommercialFlightContract,Lushlands,South Hope,550.93,33866,66895
+ServiceFlightContract,Deadkerbal Pit,Hanbert Cape,413.01,10260,11551
+ServiceFlightContract,The Shelf,South Pole Station,350.0,8999,10139
+TouristGroupFlightContract,Kerbal Space Centre,Jeb's island resort,147.66,8000,9415
+CommercialFlightContract,Round Range,Green Coast,830.99,41932,90378
+ServiceFlightContract,Hanbert Cape,The Shelf,369.36,9387,10573
+CommercialFlightContract,Lodnie Isles,Round Range,930.88,44809,98754
+CommercialFlightContract,South Hope,Lodnie Isles,833.03,41991,90549
+CharterFlightContract,Kerman Lake,Sanctuary Mouth,268.32,9219,13742
+CharterFlightContract,Green Coast,South Point,199.17,8390,11978
+ServiceFlightContract,Polar Research Centre,Sanctuary Mouth,609.74,14194,15958
+ServiceFlightContract,Sandy Island,Kerbin's Heart Science Centre,373.08,9461,10657
+ServiceFlightContract,Coaler Crater,Black Krags,274.02,7480,8438
+CommercialFlightContract,Lake Dermal,Round Range,1441.01,59500,141528
+CommercialFlightContract,Lushlands,Sanctuary Mouth,709.11,38422,80158
+TouristGroupFlightContract,Round Range,Everkrest,299.15,12000,14188
+ServiceFlightContract,Kerbal Space Centre,Dundard's Edge,705.7,16114,18107
+BusinessFlightContract,Jeb's island resort,Ben Bay,69.58,6000,6899
+BusinessFlightContract,Dundard's Edge,South Hope,1658.23,35000,40250
+BusinessFlightContract,Kerbal Space Centre,Old KSC,765.09,17000,19550
+ServiceFlightContract,Mount Snowey,Deadkerbal Pit,495.11,11902,13390
+BusinessFlightContract,Arakebo,Green Coast,124.3,7500,8625
+CommercialFlightContract,Sanctuary Mouth,South Hope,933.04,44871,98935
+ServiceFlightContract,South Point,Kerbin's Bottom,343.88,8877,10002
