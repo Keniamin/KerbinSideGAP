@@ -92,3 +92,23 @@ def add_arrow(route_map, pt1, pt2, **extra):
         ))
     for pt in points:
         route_map.add(route_map.line(pt, pt2, **extra))
+
+def calculate_reward(contract, reward_string, calc_min):
+    """
+    Function to calculate min or max reward using the reward string from
+    contract description. Yes, it's really crazy. Don't blame me, please.
+    """
+    def Random(first, second):
+        func = (min if calc_min else max)
+        return func(float(first), float(second))
+
+    if 'needSecondCrewMember' in reward_string:
+        reward_string = reward_string.replace('@/needSecondCrewMember', '0' if calc_min else '1')
+    if 'passengersNum' in reward_string:
+        reward_string = reward_string.replace(
+            '@/passengersNum',
+            'Random({}, {})'.format(contract.passengers_number[0], contract.passengers_number[1]),
+        )
+
+    assert '@/' not in reward_string, 'Some variable is unknown in "{}"'.format(reward_string)
+    return int(eval(reward_string))

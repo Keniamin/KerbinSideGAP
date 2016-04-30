@@ -86,52 +86,52 @@ ROUTES = {
     ("Arakebo", "Green Coast"): BusinessFlightContract(
         objective="@/VIK, the head doctor of the Green Coast's city hospital, was on a business trip in Aracebo Island clinic. Now @/VIKwho needs to go home. Meet @/VIKwhom near the clinic and transport to Green Coast.",
         staff_type="Scientist",
-        reward=3000,
+        reward=5500,
     ),
     ("Dundard's Edge", "South Hope"): BusinessFlightContract(
         objective="Due to growing air traffic South Hope airport needs qualified air traffic controller. @/VIK is a great one. Meet @/VIKwhom near the Dundard's Edge control tower and transport to South Hope.",
         staff_type="Pilot",
-        reward=12500,
+        reward=33000,
     ),
     ("Guardian's Basin", "Jeb's island resort"): BusinessFlightContract(
         objective="Kerbin Aerotech held a draw among it's employees. The winner, @/VIK, got the tour including the best recreation facilities of Kerbin. Today @/VIKwho is leaving the Guardian's Basin tourist base and moving to the next point of the tour. Transport @/VIKwhom to Jeb's island resort.",
         staff_type="Pilot",
-        reward=4000,
+        reward=7000,
     ),
     ("Jeb's island resort", "Ben Bay"): BusinessFlightContract(
         objective="The key employee of the KashCorp, @/VIK, is resting at the Jeb's island resort, but is urgently needed in the headquarter of the company. Meet @/VIKwhom near the cottage which @/VIKwho rents and transport to the Ben Bay.",
         staff_type="Engineer",
-        reward=1500,
+        reward=4000,
     ),
     ("Kerbal Space Centre", "Old KSC"): BusinessFlightContract(
         objective="One of the space corporations located in the KSC tends to enter into a contract for the supply of parts for the spacecrafts with SpaceTech Industrial. Organize a transfer from the office to the airport for the CEO of company, @/VIK, and transport @/VIKwhom to the headquarters of the SpaceTech Industrial at the Old KSC for the negotiation of the contract.",
         staff_type="Engineer",
-        reward=7500,
+        reward=15000,
     ),
     ("Kerman Lake", "Sea's End"): BusinessFlightContract(
         objective="The scientists from Institute of Water Research located at Kerman Lake need to analize water samples from the inner sea. Meet their collegue @/VIK with a portative water analizator near the Institute and transport @/VIKwhom to the Sea's End base.",
         staff_type="Scientist",
-        reward=11000,
+        reward=22000,
     ),
     ("Polar Research Centre", "KKVLA"): BusinessFlightContract(
         objective="Engineers serving KKVLA suspect that an error crept in the settings of antennas synchronization system. They need a piece of advice from a famous scientist @/VIK, who will help them dispel the doubts. Unfortunately, @/VIKwho is now working in the distant observatory in the area of Polar Research Centre. Transport @/VIKwhom to Polar Research Centre airport and then bring to KKVLA.",
         special_notes="Observatory located quite far from airfield, but has it's own helipad. So the good way to transport @/VIK to the plane is to send helicopter for @/VIKwhom from Bio-Dome's helipad.",
         staff_type="Scientist",
-        reward=8000,
+        reward=13000,
     ),
 
     # Tourist groups contracts
     ("Round Range", "Everkrest"): TouristGroupFlightContract(
         objective="The group of mountain climbers wants to rent a helicopter which will transport them from their arrival airport, Round Range, to the base camp on Everkrest.",
-        reward=6000,
+        reward=9000,
     ),
     ("Kerbal Space Centre", "Jeb's island resort"): TouristGroupFlightContract(
         objective="KSC is looking for helicopter which can transport kerbonauts, who returned from a flight, to the Jeb's island resort for a deserved rest.",
-        reward=3000,
+        reward=5000,
     ),
     ("Ben Bay", "Guardian's Basin"): TouristGroupFlightContract(
         objective="One of the departments of the KashCorp organized an offsite corporate party at the Guardian's Basin. Transport participants from the headquarters of KashCorp at the Ben Bay to the tourist base.",
-        reward=7000,
+        reward=8000,
     ),
 
     # Charter flight contracts

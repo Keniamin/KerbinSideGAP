@@ -33,7 +33,44 @@ def make_distance_table(options):
             d = utils.distance(loc1, loc2)
             row.append(str(round(d, 2)))
         rows.append(row)
+    if options.verbose > 1:
+        print 'Writing file Distances.csv'
     with open('Distances.csv', 'w') as out:
+        out.write('\n'.join([','.join(row) for row in rows]) + '\n')
+
+
+def make_reward_table(options):
+    """Makes CVS table with rewards for all contracts."""
+    print 'Reward table is generating'
+    locations_info = {
+        loc.name: loc
+        for loc in LOCATIONS
+    }
+    rows = [['Class', 'Departure', 'Destination', 'Distance', 'Min reward', 'Max reward']]
+    for route, contract in ROUTES.iteritems():
+        contract.set_locations(locations_info[route[0]], locations_info[route[1]])
+        advance_funds, reward_funds, _, _ = contract.get_rewards()
+
+        if options.verbose > 0:
+            print 'Calculating reward for {}'.format(contract)
+        reward_str = '{} + ({} + {}) * Random(1.0, 1.15)'.format(
+            advance_funds, reward_funds,
+            RECOVER_REFUND_COEF * contract.approx_launch_cost,
+        )
+        min_reward = utils.calculate_reward(contract, reward_str, calc_min=True)
+        max_reward = utils.calculate_reward(contract, reward_str, calc_min=False)
+
+        rows.append([
+            contract.__class__.__name__,
+            contract.from_loc.name,
+            contract.to_loc.name,
+            str(round(utils.distance(contract.from_loc, contract.to_loc), 2)),
+            str(min_reward),
+            str(max_reward),
+        ])
+    if options.verbose > 1:
+        print 'Writing file Rewards.csv'
+    with open('Rewards.csv', 'w') as out:
         out.write('\n'.join([','.join(row) for row in rows]) + '\n')
 
 
@@ -208,6 +245,8 @@ def main():
         help='Generate files in directory DIR.')
     parser.add_argument('--dist', action='store_true',
         help='Make only distances table for locations.')
+    parser.add_argument('--reward', action='store_true',
+        help='Make only reward table for contracts.')
     parser.add_argument('--map', action='store_true',
         help='Make only routes map.')
     options = parser.parse_args()
@@ -218,6 +257,8 @@ def main():
     print 'Found {} locations, {} routes'.format(len(LOCATIONS), len(ROUTES))
     if options.dist:
         make_distance_table(options)
+    elif options.reward:
+        make_reward_table(options)
     elif options.map:
         make_route_map(options)
     else:
