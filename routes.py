@@ -93,13 +93,13 @@ ROUTES = {
         staff_type="Pilot",
         reward=33000,
     ),
-    ("Guardian's Basin", "Jeb's island resort"): BusinessFlightContract(
-        objective="Kerbin Aerotech held a draw among it's employees. The winner, @/VIK, got the tour including the best recreation facilities of Kerbin. Today @/VIKwho is leaving the Guardian's Basin tourist base and moving to the next point of the tour. Transport @/VIKwhom to Jeb's island resort.",
+    ("Guardian's Basin", "Jeb's Island Resort"): BusinessFlightContract(
+        objective="Kerbin Aerotech held a draw among it's employees. The winner, @/VIK, got the tour including the best recreation facilities of Kerbin. Today @/VIKwho is leaving the Guardian's Basin tourist base and moving to the next point of the tour. Transport @/VIKwhom to Jeb's Island Resort.",
         staff_type="Pilot",
         reward=7000,
     ),
-    ("Jeb's island resort", "Ben Bay"): BusinessFlightContract(
-        objective="The key employee of the KashCorp, @/VIK, is resting at the Jeb's island resort, but is urgently needed in the headquarter of the company. Meet @/VIKwhom near the cottage which @/VIKwho rents and transport to the Ben Bay.",
+    ("Jeb's Island Resort", "Ben Bay"): BusinessFlightContract(
+        objective="The key employee of the KashCorp, @/VIK, is resting at the Jeb's Island Resort, but is urgently needed in the headquarter of the company. Meet @/VIKwhom near the cottage which @/VIKwho rents and transport to the Ben Bay.",
         staff_type="Engineer",
         reward=4000,
     ),
@@ -125,8 +125,8 @@ ROUTES = {
         objective="The group of mountain climbers wants to rent a helicopter which will transport them from their arrival airport, Round Range, to the base camp on Everkrest.",
         reward=9000,
     ),
-    ("Kerbal Space Centre", "Jeb's island resort"): TouristGroupFlightContract(
-        objective="KSC is looking for helicopter which can transport kerbonauts, who returned from a flight, to the Jeb's island resort for a deserved rest.",
+    ("Kerbal Space Centre", "Jeb's Island Resort"): TouristGroupFlightContract(
+        objective="KSC is looking for helicopter which can transport kerbonauts, who returned from a flight, to the Jeb's Island Resort for a deserved rest.",
         reward=5000,
     ),
     ("Ben Bay", "Guardian's Basin"): TouristGroupFlightContract(

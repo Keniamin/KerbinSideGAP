@@ -7,6 +7,7 @@ LOCATIONS = [
         helipad=(8.39111766626083, -180.356277756363, 59.557318418917),
         staff_spawn=(8.39117236570734, 179.64703981633, 1771.23),
         vip_spawn=(8.36093440437406, 179.770392040949, 1534.8),
+        kk_base_name="Arakebo Observatory",
     ),
     Location(
         "Ben Bay", "KashCorp headquarter in the Ben Bay, not far from the KSC.",
@@ -46,6 +47,7 @@ LOCATIONS = [
         aircraft_parking=(44.2652271461589, 227.991633524058, 7.0059563111281),
         staff_spawn=(44.2700526212791, 227.993888765279, 529.51),
         vip_spawn=(44.2502939656543, 227.93067365952, 535.0),
+        kk_base_name="Dundard's Edge Runway",
     ),
     Location(
         "Everkrest", "Small building on the slope of the Everkrest, one of the highest mountains on the Kerbin.",
@@ -81,7 +83,7 @@ LOCATIONS = [
         staff_spawn=(-22.6158025699809, -140.25358447833, 2.28),
     ),
     Location(
-        "Jeb's island resort", "Beautifull island in the neighborhood of KSC where Jebediah Kerman founded a small resort area.",
+        "Jeb's Island Resort", "Beautifull island in the neighborhood of KSC where Jebediah Kerman founded a small resort area.",
         helipad=(6.84000613509939, 297.685691246224, 3.7230232043145),
         vip_spawn=(6.88682943360179, -62.2708200755656, 4.6),
     ),
@@ -92,6 +94,7 @@ LOCATIONS = [
         aircraft_parking=(-0.0568078672556827, 285.379812232193, 4.08197237481365),
         staff_spawn=(-0.0600857127900175, 285.351339902779, 136.31),
         vip_spawn=(-0.161098320623303, 285.293799973877, 67.31),
+        kk_base_name=False, # no base existence check needed
     ),
     Location(
         "Kerbin's Bottom", "Small research centre with a radio telescope on the cold island called Kerbin's Bottom.",
@@ -116,6 +119,7 @@ LOCATIONS = [
         helipad=(10.60579, 227.7325, 17.1318576134508),
         aircraft_parking=(10.614287914325, 227.895632512688, 33.7199208256789),
         staff_spawn=(10.6050653577387, 227.731025147663, 362.01),
+        kk_base_name="Area 110011",
     ),
     Location(
         "Lake Dermal", "Cargo base and civil regional airport near the Lake Dermal.",
@@ -145,6 +149,7 @@ LOCATIONS = [
         runway=(20.6503990966372, -146.439906824075, 1.8113792745861),
         aircraft_parking=(20.6061343501, 213.51535633634, 6.47058665752411),
         staff_spawn=(20.6457962912605, 213.548356408135, 430.31),
+        kk_base_name="KSC 2 Spaceplane Base",
     ),
     Location(
         "Polar Research Centre", "Research centre located not far from Kerbin's North Pole.",
@@ -158,6 +163,7 @@ LOCATIONS = [
         runway=(-6.01204632159655, -260.611086414459, 19.4767766136204),
         helipad=(-6.018824, 99.5179, 2.60995918814092),
         aircraft_parking=(-5.99826561874289, 99.4318812340424, 14.5831762446323),
+        kk_base_name="Round Range Runway",
     ),
     Location(
         "Sanctuary Mouth", "Base on the mouth of the Sanctuary River, which was originally used as a launch site and cargo terminal, but was further supplemented with the passenger terminal to serve as a civil airport for nearby cities.",
@@ -195,5 +201,11 @@ LOCATIONS = [
         "The Shelf", "Small air base between two large bays on the small island far to the South, mainly used as a transit point for cargo for South Pole Station.",
         runway=(-53.81633, 197.9046, 8.22618901217356),
         staff_spawn=(-53.8197, 197.9009, 314.01),
+    ),
+    Location(
+        "Valentina's Landing", "Big civil airport located close to Valentina's hometown.",
+        runway=(0, 0, 0),
+        aircraft_parking=(0, 0, 0),
+        staff_spawn=(0, 0, 0),
     ),
 ]

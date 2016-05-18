@@ -185,6 +185,9 @@ def make_routes(options):
             for type, name, definition in contract.get_data()
         )
 
+        # Add requirements.
+        contract_config.extend(contract.get_requirements())
+
         # Add behaviours.
         waypoints_config = []
         for wp in contract.get_waypoints():

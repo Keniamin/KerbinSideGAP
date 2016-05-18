@@ -19,7 +19,7 @@ def find_configs(dir):
     for name in os.listdir(dir):
         path = os.path.join(dir, name)
         if os.path.isdir(path):
-            configs += find_configs(path)
+            configs.extend(find_configs(path))
         elif os.path.isfile(path) and name.endswith('.cfg'):
             configs.append(path)
     return configs
@@ -52,20 +52,24 @@ def print_locations(all_bases):
         bases_types = set(base['Category'] for base in loc_bases)
         if len(bases_types) != len(loc_bases):
             print >> sys.stderr, 'WARNING: Location {} has non-unique launch site types'.format(loc)
-        text = ["Location(\n\t'{}', '<description>',".format(loc)]
-        text += [
+        text = ['Location(\n\t"{}", "<description>",'.format(loc)]
+        text.extend([
             '\t# {} "{}": {}'.format(
                 base['Category'], base['LaunchSiteName'], base['LaunchSiteDescription'],
             )
             for base in loc_bases
-        ]
-        text += [
+        ])
+        text.extend([
             '\t{}=({}, {}, {}),'.format(
                 'helipad' if base['Category'] == 'Helipad' else 'runway',
                 base['RefLatitude'], base['RefLongitude'], base['RadiusOffset'],
             )
             for base in loc_bases
-        ]
+        ])
+        text.extend([
+            '\tkk_base_name="{}",'.format(base['LaunchSiteName'])
+            for base in loc_bases
+        ])
         text.append('),')
         print '\n'.join(text)
 
@@ -80,7 +84,7 @@ def main():
 
     configs = []
     for dir in options.dirs:
-        configs += find_configs(dir)
+        configs.extend(find_configs(dir))
 
     bases = []
     for name in configs:

@@ -93,6 +93,7 @@ def add_arrow(route_map, pt1, pt2, **extra):
     for pt in points:
         route_map.add(route_map.line(pt, pt2, **extra))
 
+
 def calculate_reward(contract, reward_string, calc_min):
     """
     Function to calculate min or max reward using the reward string from

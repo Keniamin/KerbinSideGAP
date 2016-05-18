@@ -15,6 +15,7 @@ class Location(object):
         self, name, description,
         runway=None, helipad=None, aircraft_parking=None,
         staff_spawn=None, vip_spawn=None,
+        kk_base_name=None,
     ):
         """
         @param name Short name of the location.
@@ -35,6 +36,9 @@ class Location(object):
                            the service contracts from this location (if any).
         @param vip_spawn Point at which VIP Kerbal would appear for the
                          business flight contracts from this location (if any).
+        @param kk_base_name Name of the launch site in the original .cfg file
+                            for checking the base existence using KKCCExt. By
+                            default equals to name.
         """
         self.name = name
         self.description = description
@@ -43,8 +47,11 @@ class Location(object):
         self.aircraft_parking = aircraft_parking
         self.staff_spawn = staff_spawn
         self.vip_spawn = vip_spawn
+        self.kk_base_name = kk_base_name
         if aircraft_parking is None:
             self.aircraft_parking = self.runway
+        if self.kk_base_name is None:
+            self.kk_base_name = self.name
 
     @property
     def position(self):
@@ -132,6 +139,24 @@ class Contract(object):
         """
         return []
 
+    def get_requirements(self):
+        """
+        Returns the list of contract requirements. By default requires both
+        departure and destination bases exists.
+        """
+        requirements = []
+        if self.from_loc.kk_base_name:
+            requirements.append(make_base_requirement(
+                'Departure', 'BaseExists',
+                self.from_loc.kk_base_name,
+            ))
+        if self.to_loc.kk_base_name:
+            requirements.append(make_base_requirement(
+                'Destination', 'BaseExists',
+                self.to_loc.kk_base_name,
+            ))
+        return requirements
+
     def get_waypoints(self):
         """
         Returns the list of points for waypoint generator behavior. By default
@@ -140,18 +165,18 @@ class Contract(object):
         waypoints = []
         if self.to_loc.aircraft_parking:
             self.waypoints.append(self.to_loc.aircraft_parking)
-            waypoints += [[
+            waypoints.extend([[
                     ('name', self.to_loc.name + ' aircraft parking'),
                     ('icon', ICONS_PATH + 'Parking'),
                 ] + utils.point_to_params(self.to_loc.aircraft_parking)
-            ]
+            ])
         if self.to_loc.helipad:
             self.waypoints.append(self.to_loc.helipad)
-            waypoints += [[
+            waypoints.extend([[
                     ('name', self.to_loc.name + ' helipad'),
                     ('icon', ICONS_PATH + 'Helipad'),
                 ] + utils.point_to_params(self.to_loc.helipad)
-            ]
+            ])
         return waypoints
 
     def get_additional_behaviours(self):
@@ -232,23 +257,33 @@ class PassengersContract(Contract):
         data.append(('List<Kerbal>', 'passengers', 'NewKerbals(@/passengersNum)'))
         return data
 
+    def get_requirements(self):
+        """Adds requirement for departure base to be opened."""
+        requirements = super(PassengersContract, self).get_requirements()
+        if self.from_loc.kk_base_name:
+            requirements.append(make_base_requirement(
+                'Departure', 'BaseOpen',
+                self.from_loc.kk_base_name,
+            ))
+        return requirements
+
     def get_waypoints(self):
         """Adds possible starting points to the list."""
         waypoints = super(PassengersContract, self).get_waypoints()
         if self.from_loc.runway:
             self.waypoints.append(self.from_loc.runway)
-            waypoints += [[
+            waypoints.extend([[
                     ('name', self.from_loc.name + ' runway'),
                     ('icon', ICONS_PATH + 'Runway'),
                 ] + utils.point_to_params(self.from_loc.runway)
-            ]
+            ])
         if self.from_loc.helipad:
             self.waypoints.append(self.from_loc.helipad)
-            waypoints += [[
+            waypoints.extend([[
                     ('name', self.from_loc.name + ' helipad'),
                     ('icon', ICONS_PATH + 'Helipad'),
                 ] + utils.point_to_params(self.from_loc.helipad)
-            ]
+            ])
         return waypoints
 
     def get_additional_behaviours(self):
@@ -360,7 +395,7 @@ class ServiceFlightContract(TypedStaffContract):
         """Adds random waypoints for staff."""
         waypoints = super(ServiceFlightContract, self).get_waypoints()
         self.staff_points_start_index = len(waypoints)
-        waypoints += [
+        waypoints.extend([
             [
                 ('name', 'Staff spawn point'),
                 ('hidden', 'true'),
@@ -373,7 +408,7 @@ class ServiceFlightContract(TypedStaffContract):
                 ('minDistance', 1),
                 ('maxDistance', 2),
             ],
-        ]
+        ])
         self.staff_points_start_index += 1 # skip staff spawn point itself
         return waypoints
 
@@ -538,6 +573,13 @@ class CommercialFlightContract(PassengersContract):
 
 
 # ===== Parameters helpers ===== #
+
+def make_base_requirement(target, type, base):
+    return ('REQUIREMENT', [
+        ('name', target + type),
+        ('type', type),
+        ('basename', base),
+    ])
 
 def make_options_group(description, inner, type='Any'):
     return ('PARAMETER', [
