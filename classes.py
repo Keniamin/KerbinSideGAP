@@ -341,8 +341,6 @@ class TypedStaffContract(Contract):
                           or Scientist).
         """
         super(TypedStaffContract, self).__init__(**kwargs)
-        self.passenger_engineers = (1 if staff_type == 'Engineer' else 0)
-        self.passenger_pilots = (1 if staff_type == 'Pilot' else 0)
         self.staff_type = staff_type
 
 
@@ -363,8 +361,6 @@ class ServiceFlightContract(TypedStaffContract):
         """
         super(ServiceFlightContract, self).__init__(**kwargs)
         self.passengers_number = randint(*self.passengers_number)
-        self.passenger_engineers *= self.passengers_number
-        self.passenger_pilots *= self.passengers_number
 
     def set_locations(self, from_loc, to_loc):
         """Performs additional check."""
@@ -436,7 +432,7 @@ class ServiceFlightContract(TypedStaffContract):
 
     def get_parameters(self):
         params = [
-            make_crew_request("Pilot", 1 + self.passenger_pilots, "an aircraft commander"),
+            make_crew_request("Pilot", 1, "an aircraft commander"),
             make_passengers_request(),
             self.make_land_parameter(),
             make_stop_request(),
@@ -489,8 +485,8 @@ class BusinessFlightContract(FixedRewardContract, TypedStaffContract):
 
     def get_parameters(self):
         params = [
-            make_crew_request("Pilot", 1 + self.passenger_pilots, "an aircraft commander"),
-            make_crew_request("Engineer", 1 + self.passenger_engineers, "a flight engineer"),
+            make_crew_request("Pilot", 1, "an aircraft commander"),
+            make_crew_request("Engineer", 1, "a flight engineer"),
             make_passengers_request(),
             self.make_land_parameter(),
             make_stop_request(),
@@ -602,6 +598,7 @@ def make_crew_request(trait, count, whois):
         ('type', 'HasCrew'),
         ('trait', trait),
         ('minCrew', count),
+        ('excludeKerbal', '@/passengers'),
         ('title', 'Has {} aboard'.format(whois)),
         ('disableOnStateChange', 'false'),
         ('hideChildren', 'true'),

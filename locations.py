@@ -155,7 +155,7 @@ LOCATIONS = [
         "Polar Research Centre", "Research centre located not far from Kerbin's North Pole.",
         runway=(79.57256, 282.5903, 3.5),
         aircraft_parking=(79.5711227141705, 282.61567112086, 4),
-        staff_spawn=(79.5707975982126, 282.625004069961, 34.21),
+        staff_spawn=(79.5707975982126, 282.625004069961, 35.7),
         vip_spawn=(79.2599594082688, 281.555229370229, 45.76),
     ),
     Location(
@@ -203,9 +203,9 @@ LOCATIONS = [
         staff_spawn=(-53.8197, 197.9009, 314.01),
     ),
     Location(
-        "Valentina's Landing", "Big civil airport located close to Valentina's hometown.",
-        runway=(0, 0, 0),
-        aircraft_parking=(0, 0, 0),
-        staff_spawn=(0, 0, 0),
+        "Valentina's Landing", "Big civil and cargo airport located close to Valentina's hometown.",
+        runway=(-49.5942069797092, 127.7067, 7),
+        aircraft_parking=(-49.5930766607724, 127.74, 20.3715784981526),
+        staff_spawn=(-49.5803295731442, 127.722347357365, 122.962735874695),
     ),
 ]

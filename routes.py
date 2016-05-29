@@ -22,6 +22,10 @@ ROUTES = {
     ("Hanbert Cape", "The Shelf"): ServiceFlightContract(
         staff_type="Engineer",
     ),
+    ("Kerbin's Bottom", "Valentina's Landing"): ServiceFlightContract(
+        objective="We had a problem with Kerbin's Bottom telescope so we sent our engineers to fix it. Now their work is done. Transport them to the nearest civil airport, Valentina's Landing.",
+        staff_type="Engineer",
+    ),
     ("KKVLA", "Arakebo"): ServiceFlightContract(
         objective="Scientific group in the Arakebo Observatory has some technical problems with the telescope. They asked for help since our company has some qualified engineers at the KKVLA. Transport our engineers to the Arakebo.",
         staff_type="Engineer",
@@ -79,6 +83,10 @@ ROUTES = {
     ),
     ("Sea's End", "Goldpool"): ServiceFlightContract(
         objective="We have a valuable cargo at the Goldpool base the delivery of which we can entrust only to our employees. Transport our pilots from the Sea's End base to the Goldpool.",
+        staff_type="Pilot",
+    ),
+    ("Valentina's Landing", "Round Range"): ServiceFlightContract(
+        objective="Our reserve pilot at the Round Range airport suddenly fell ill. We have to send there some more pilots to avoid the risk of flight cancellation. Transport our pilots from Valentina's Landing airport.",
         staff_type="Pilot",
     ),
 
@@ -142,6 +150,7 @@ ROUTES = {
     ("Kerman Lake", "Sanctuary Mouth"): CharterFlightContract(),
     ("Lodnie Isles", "Lushlands"): CharterFlightContract(),
     ("Green Coast", "South Point"): CharterFlightContract(),
+    ("Valentina's Landing", "South Point"): CharterFlightContract(),
 
     # Commercial flight contracts
     ("Green Coast", "Lake Dermal"): CommercialFlightContract(),
@@ -156,5 +165,7 @@ ROUTES = {
     ("Sanctuary Mouth", "Lake Dermal"): CommercialFlightContract(),
     ("Sanctuary Mouth", "South Hope"): CommercialFlightContract(),
     ("South Hope", "Lodnie Isles"): CommercialFlightContract(),
+    ("South Hope", "Valentina's Landing"): CommercialFlightContract(),
     ("Round Range", "Lushlands"): CommercialFlightContract(),
+    ("Valentina's Landing", "Green Coast"): CommercialFlightContract(),
 }
