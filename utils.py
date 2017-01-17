@@ -1,3 +1,4 @@
+import re
 from math import hypot, sin, cos, acos, pi
 
 KERBIN_RADIUS = 600
@@ -113,3 +114,10 @@ def calculate_reward(contract, reward_string, calc_min):
 
     assert '@/' not in reward_string, 'Some variable is unknown in "{}"'.format(reward_string)
     return int(eval(reward_string))
+
+
+def normalize_flight_description(description):
+    description = re.sub('@/VIK[a-z]*', 'Very Important Kerbal', description)
+
+    assert '@/' not in description, 'Unexpected variable(s) in "{}"'.format(description)
+    return description

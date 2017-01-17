@@ -4,6 +4,7 @@ from random import randint
 import utils
 
 ICONS_PATH = 'ContractPacks/KerbinSideGAP/Icons/'
+DEFAULT_AGENT = 'Kerbin Side GAP'
 
 
 # ===== Basic classes ===== #
@@ -70,6 +71,11 @@ class Contract(object):
     route_color = 'black' # default color of the route on the map
     max_simultaneous = 1 # default number of max simultaneous contracts of the type
     approx_launch_cost = 0 # default approximate cost of launch to calculate launch-recover refund
+
+    @classmethod
+    def get_flight_type(cls):
+        contract_type = re.match(r'(.*)FlightContract', cls.__name__).group(1)
+        return re.sub(r'([A-Z])', r' \1', contract_type).strip().lower()
 
     def __init__(self, objective=None, special_notes=None):
         """
@@ -240,7 +246,6 @@ class PassengersContract(Contract):
     Base class for contract types in which player must transport passengers.
     Adds spawning of passengers and requires visiting start location.
     """
-    weight = 0.85
     passengers_number = (0, 0) # stupid default interval (subclasses must set normal one)
 
     def get_synopsis_notes(self):
@@ -444,7 +449,6 @@ class ServiceFlightContract(TypedStaffContract):
 class BusinessFlightContract(FixedRewardContract, TypedStaffContract):
     """Describes a business flight."""
     route_color = 'tomato'
-    weight = 0.6
     approx_launch_cost = 10000
     agent = 'Kerbal Aircraft Rent'
 
@@ -534,7 +538,7 @@ class CharterFlightContract(PassengersContract):
     route_color = 'blue'
     max_simultaneous = 2
     approx_launch_cost = 30000
-    agent = 'Kerbin Charter Jets'
+    agent = 'Kerbin Charter Jet'
     passengers_number = (8, 17) # for random selection (min included, max excluded)
 
     def get_rewards(self):
@@ -553,7 +557,7 @@ class CommercialFlightContract(PassengersContract):
     route_color = 'skyblue'
     max_simultaneous = 2
     approx_launch_cost = 90000
-    agent = 'Kerbin BlueSky Airlines'
+    agent = 'BlueSky Airways'
     passengers_number = (24, 65) # for random selection (min included, max excluded)
 
     def get_rewards(self):

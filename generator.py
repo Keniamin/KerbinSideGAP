@@ -2,7 +2,6 @@
 """Generates contract files based on locations and routes."""
 
 import os
-import re
 import argparse
 
 try:
@@ -11,6 +10,7 @@ except ImportError:
     svgwrite = None
 
 import utils
+from classes import DEFAULT_AGENT
 from locations import LOCATIONS
 from routes import ROUTES
 
@@ -149,18 +149,21 @@ def make_routes(options):
         ])
         if hasattr(contract, 'agent'):
             contract_config.append(('agent', contract.agent))
-        if hasattr(contract, 'weight'):
-            contract_config.append(('weight', contract.weight))
 
         # Add contract texts.
-        contract_type = re.match(r'(.*)FlightContract', contract.__class__.__name__).group(1)
-        flight_type = re.sub(r'([A-Z])', r' \1', contract_type).strip().lower()
+        flight_title = 'Flight: {} -> {}'.format(contract.from_loc.name, contract.to_loc.name)
+        flight_description = contract.get_description()
+        flight_generic_description = utils.normalize_flight_description(flight_description)
         flight_synopsis = 'Perform {} flight from the {} to the {}.'.format(
-            flight_type, contract.from_loc.name, contract.to_loc.name
+            contract.get_flight_type(), contract.from_loc.name, contract.to_loc.name
         )
         contract_config.extend([
-            ('title', 'Perform {} flight'.format(flight_type)),
-            ('description', contract.get_description()),
+            ('title', flight_title),
+            ('description', flight_description),
+        ])
+        if flight_generic_description != flight_description:
+            contract_config.append(('genericDescription', flight_generic_description))
+        contract_config.extend([
             ('synopsis', ' '.join([flight_synopsis] + contract.get_synopsis_notes())),
             ('completedMessage', 'Your flight successfully completed.'),
         ])
@@ -181,7 +184,7 @@ def make_routes(options):
 
         # Add data nodes.
         contract_config.extend(
-            ('DATA', [('type', type), (name, definition)])
+            ('DATA', [('type', type), ('hidden', 'true'), (name, definition)])
             for type, name, definition in contract.get_data()
         )
 
@@ -217,15 +220,21 @@ def make_routes(options):
             out.write('\n')
 
     groups_config = [
+        ('minVersion', '1.21.0'),
         ('name', 'KerbinSideGapContract'),
-        ('minVersion', '1.9.6'),
+        ('displayName', 'Kerbin Side GAP'),
+        ('agent', DEFAULT_AGENT),
         ('maxSimultaneous', 5),
     ]
     for contract_class in classes_set:
-        groups_config.append(('CONTRACT_GROUP', [
+        group_config = [
+            ('minVersion', '1.21.0'),
             ('name', 'KerbinSideGap' + contract_class.__name__),
+            ('displayName', 'Perform {} flight'.format(contract_class.get_flight_type())),
+            ('agent', getattr(contract_class, 'agent', DEFAULT_AGENT)),
             ('maxSimultaneous', contract_class.max_simultaneous),
-        ]))
+        ]
+        groups_config.append(('CONTRACT_GROUP', group_config))
     if options.verbose > 1:
         print 'Writing file Groups.cfg'
     with open('Groups.cfg', 'w') as out:
