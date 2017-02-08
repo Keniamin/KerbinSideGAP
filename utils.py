@@ -17,10 +17,11 @@ def deg_to_rad(deg):
     return pi * deg / 180
 
 
-def point_to_params(pt):
+def point_to_params(pt, absolute_altitude=False):
     """Returns point coordinates as a dict for waypoint generator."""
+    alt =  pt[2].absolute if absolute_altitude else pt[2].relative
     return [
-        ('latitude', pt[0]), ('longitude', pt[1]), ('altitude', pt[2]),
+        ('latitude', pt[0]), ('longitude', pt[1]), ('altitude', alt),
     ]
 
 
@@ -38,8 +39,8 @@ def point_on_sphere(pt):
 
 def distance(loc1, loc2):
     """Calculates distance between locations along the surface."""
-    loc1 = map(deg_to_rad, loc1.position)
-    loc2 = map(deg_to_rad, loc2.position)
+    loc1 = map(deg_to_rad, loc1.position[:2])
+    loc2 = map(deg_to_rad, loc2.position[:2])
     return KERBIN_RADIUS * acos(min(1,
         sin(loc1[0]) * sin(loc2[0]) + cos(loc1[0]) * cos(loc2[0]) * cos(loc1[1] - loc2[1])
     ))
@@ -55,6 +56,8 @@ def write_config(out, node, level=0):
             out.write(lf_align + '}')
         else:
             out.write('{}{} = {}'.format(lf_align, param, value))
+    if level == 0:
+        out.write('\n')
 
 
 def add_arrow(route_map, pt1, pt2, **extra):

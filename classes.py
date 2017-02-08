@@ -9,6 +9,28 @@ DEFAULT_AGENT = 'Kerbin Side GAP'
 
 # ===== Basic classes ===== #
 
+class LocationAltitude(object):
+    """
+    Class to simplify conversions between relative (above ground)
+    and absolute (above sea level) altitudes.
+    """
+
+    def __init__(self, relative, ground):
+        """
+        @param relative Altitude above the ground.
+        @param ground Altitude of the ground above sea level.
+        """
+        self.relative = relative
+        self.ground = ground
+
+    @property
+    def absolute(self):
+        return self.ground + self.relative
+
+    def __str__(self):
+        return '<Altitude "{}+{}">'.format(self.ground, self.relative)
+
+
 class Location(object):
     """Totally describes separate location at Kerbin."""
 
@@ -16,6 +38,7 @@ class Location(object):
         self, name, description,
         runway=None, helipad=None, aircraft_parking=None,
         staff_spawn=None, vip_spawn=None,
+        launch_refund=None, recovery_factor=None,
         kk_base_name=None,
     ):
         """
@@ -37,6 +60,10 @@ class Location(object):
                            the service contracts from this location (if any).
         @param vip_spawn Point at which VIP Kerbal would appear for the
                          business flight contracts from this location (if any).
+        @param launch_refund Percent of launch cost that player gets on launch.
+                             By default equals to 0.
+        @param recovery_factor Percent of aircraft cost that player gets on
+                               recovery by this base. By default equals to 50.
         @param kk_base_name Name of the launch site in the original .cfg file
                             for checking the base existence using KKCCExt. By
                             default equals to name.
@@ -48,8 +75,14 @@ class Location(object):
         self.aircraft_parking = aircraft_parking
         self.staff_spawn = staff_spawn
         self.vip_spawn = vip_spawn
+        self.launch_refund = launch_refund
+        self.recovery_factor = recovery_factor
         self.kk_base_name = kk_base_name
-        if aircraft_parking is None:
+        if self.launch_refund is None:
+            self.launch_refund = 0
+        if self.recovery_factor is None:
+            self.recovery_factor = 50
+        if self.aircraft_parking is None:
             self.aircraft_parking = self.runway
         if self.kk_base_name is None:
             self.kk_base_name = self.name
@@ -89,6 +122,15 @@ class Contract(object):
         self.waypoints = []
         self.from_loc = None
         self.to_loc = None
+
+    @property
+    def refund_coefficient(self):
+        """
+        Calculates amount of funds we must return to player
+        to compensate launch-recover difference.
+        """
+        overall_percent = 100 - self.from_loc.launch_refund - self.to_loc.recovery_factor
+        return max(0, self.approx_launch_cost * overall_percent / 100.0)
 
     def __str__(self):
         return '<{} from "{}" to "{}">'.format(self.__class__.__name__, self.from_loc, self.to_loc)
@@ -354,7 +396,7 @@ class TypedStaffContract(Contract):
 class ServiceFlightContract(TypedStaffContract):
     """Describes a service flight."""
     route_color = 'gold'
-    max_simultaneous = 2
+    max_simultaneous = 4
     approx_launch_cost = 10000
     passengers_number = (2, 4) # for random selection (**both** included)
 
@@ -400,11 +442,11 @@ class ServiceFlightContract(TypedStaffContract):
             [
                 ('name', 'Staff spawn point'),
                 ('hidden', 'true'),
-            ] + utils.point_to_params(self.from_loc.staff_spawn),
+            ] + utils.point_to_params(self.from_loc.staff_spawn, absolute_altitude=True),
             [
                 ('hidden', 'true'),
                 ('nearIndex', self.staff_points_start_index),
-                ('altitude', self.from_loc.staff_spawn[2]),
+                ('altitude', self.from_loc.staff_spawn[2].absolute),
                 ('count', self.passengers_number),
                 ('minDistance', 1),
                 ('maxDistance', 2),
@@ -449,6 +491,7 @@ class ServiceFlightContract(TypedStaffContract):
 class BusinessFlightContract(FixedRewardContract, TypedStaffContract):
     """Describes a business flight."""
     route_color = 'tomato'
+    max_simultaneous = 2
     approx_launch_cost = 10000
     agent = 'Kerbal Aircraft Rent'
 
@@ -482,7 +525,7 @@ class BusinessFlightContract(FixedRewardContract, TypedStaffContract):
                 ('addToRoster', 'false'),
                 ('lat', '{}'.format(self.from_loc.vip_spawn[0])),
                 ('lon', '{}'.format(self.from_loc.vip_spawn[1])),
-                ('alt', '{}'.format(self.from_loc.vip_spawn[2])),
+                ('alt', '{}'.format(self.from_loc.vip_spawn[2].absolute)),
             ]),
         ])
         return behaviours
@@ -536,7 +579,7 @@ class TouristGroupFlightContract(FixedRewardContract, PassengersContract):
 class CharterFlightContract(PassengersContract):
     """Describes a charter flight."""
     route_color = 'blue'
-    max_simultaneous = 2
+    max_simultaneous = 3
     approx_launch_cost = 30000
     agent = 'Kerbin Charter Jet'
     passengers_number = (8, 17) # for random selection (min included, max excluded)
@@ -555,7 +598,7 @@ class CharterFlightContract(PassengersContract):
 class CommercialFlightContract(PassengersContract):
     """Describes a commercial flight."""
     route_color = 'skyblue'
-    max_simultaneous = 2
+    max_simultaneous = 4
     approx_launch_cost = 90000
     agent = 'BlueSky Airways'
     passengers_number = (24, 65) # for random selection (min included, max excluded)

@@ -14,8 +14,6 @@ from classes import DEFAULT_AGENT
 from locations import LOCATIONS
 from routes import ROUTES
 
-RECOVER_REFUND_COEF = 0.2 # Coefficient to refund the player his loss of money via launch-recover
-
 CFG_FILE_HEADER = """\
 // This file was automatically generated via Kerbin Side GAP contracts generator.
 // Do not edit it manually, all changes will be lost. Edit generator instead and rerun it to get the new file.
@@ -39,6 +37,30 @@ def make_distance_table(options):
         out.write('\n'.join([','.join(row) for row in rows]) + '\n')
 
 
+def make_locations_waypoints(options):
+    """Makes .cfg file with all waypoints in WaypointManager format."""
+    print 'Waypoints for locations are generating'
+    waypoints = []
+    index = 0
+    for loc in LOCATIONS:
+        for point_type in ('runway', 'helipad', 'aircraft_parking', 'staff_spawn', 'vip_spawn'):
+            point = getattr(loc, point_type)
+            if point is None or (point_type == 'aircraft_parking' and point == loc.runway):
+                continue
+            index += 1
+            waypoints.append(('WAYPOINT', [
+                    ('name', '{} > {}'.format(loc.name, point_type)),
+                    ('celestialName', 'Kerbin'),
+                    ('icon', 'report'),
+                    ('index', index),
+                ] + utils.point_to_params(point)
+            ))
+    if options.verbose > 1:
+        print 'Writing file CustomWaypoints.cfg'
+    with open('CustomWaypoints.cfg', 'w') as out:
+        utils.write_config(out, waypoints)
+
+
 def make_reward_table(options):
     """Makes CVS table with rewards for all contracts."""
     print 'Reward table is generating'
@@ -54,8 +76,7 @@ def make_reward_table(options):
         if options.verbose > 0:
             print 'Calculating reward for {}'.format(contract)
         reward_str = '{} + ({} + {}) * Random(1.0, 1.15)'.format(
-            advance_funds, reward_funds,
-            RECOVER_REFUND_COEF * contract.approx_launch_cost,
+            advance_funds, reward_funds, contract.refund_coefficient,
         )
         min_reward = utils.calculate_reward(contract, reward_str, calc_min=True)
         max_reward = utils.calculate_reward(contract, reward_str, calc_min=False)
@@ -176,8 +197,7 @@ def make_routes(options):
             ('failureFunds', '{} * Random(0.1, 0.25)'.format(advance_funds)),
             ('rewardReputation', reward_reputation),
             ('rewardFunds', '({} + {}) * Random(1.0, 1.15)'.format(
-                RECOVER_REFUND_COEF * contract.approx_launch_cost,
-                reward_funds
+                reward_funds, contract.refund_coefficient,
             )),
             ('rewardScience', 0),
         ])
@@ -217,14 +237,13 @@ def make_routes(options):
         with open(contract_name + '.cfg', 'w') as out:
             out.write(CFG_FILE_HEADER)
             utils.write_config(out, [('CONTRACT_TYPE', contract_config)])
-            out.write('\n')
 
     groups_config = [
         ('minVersion', '1.21.0'),
         ('name', 'KerbinSideGapContract'),
         ('displayName', 'Kerbin Side GAP'),
         ('agent', DEFAULT_AGENT),
-        ('maxSimultaneous', 5),
+        ('maxSimultaneous', 8),
     ]
     for contract_class in classes_set:
         group_config = [
@@ -240,7 +259,6 @@ def make_routes(options):
     with open('Groups.cfg', 'w') as out:
         out.write(CFG_FILE_HEADER)
         utils.write_config(out, [('CONTRACT_GROUP', groups_config)])
-        out.write('\n')
 
     if options.verbose > 0:
         for loc, info in locations_info.iteritems():
@@ -261,6 +279,8 @@ def main():
         help='Make only reward table for contracts.')
     parser.add_argument('--map', action='store_true',
         help='Make only routes map.')
+    parser.add_argument('--wp', action='store_true',
+        help='Make only waypoints file.')
     options = parser.parse_args()
 
     if options.dir is not None:
@@ -273,6 +293,8 @@ def main():
         make_reward_table(options)
     elif options.map:
         make_route_map(options)
+    elif options.wp:
+        make_locations_waypoints(options)
     else:
         make_routes(options)
 

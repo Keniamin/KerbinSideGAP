@@ -10,6 +10,7 @@ PATTERNS = [
     'RefLatitude', 'RefLongitude', 'RadiusOffset',
     'LaunchSiteName', 'LaunchSiteDescription',
     'Group', 'Category',
+    'LaunchRefund', 'RecoveryFactor',
 ]
 
 
@@ -31,7 +32,8 @@ def is_launch_site(config):
     """
     return (
         re.search(r'\sLaunchPadTransform = \S', config) is not None
-        and 'LaunchSiteName' in config and not 'RocketPad' in config
+        and re.search(r'\sLaunchSiteName = \S', config) is not None
+        and not 'RocketPad' in config
     )
 
 
@@ -52,24 +54,40 @@ def print_locations(all_bases):
         bases_types = set(base['Category'] for base in loc_bases)
         if len(bases_types) != len(loc_bases):
             print >> sys.stderr, 'WARNING: Location {} has non-unique launch site types'.format(loc)
-        text = ['Location(\n\t"{}", "<description>",'.format(loc)]
-        text.extend([
+        text = ['Location(', '\t"{}", "<description>",'.format(loc)]
+        text.extend(
             '\t# {} "{}": {}'.format(
                 base['Category'], base['LaunchSiteName'], base['LaunchSiteDescription'],
             )
             for base in loc_bases
-        ])
-        text.extend([
-            '\t{}=({}, {}, {}),'.format(
+        )
+        text.extend(
+            '\t{}=({}, {}, Alt({}, None)),'.format(
                 'helipad' if base['Category'] == 'Helipad' else 'runway',
                 base['RefLatitude'], base['RefLongitude'], base['RadiusOffset'],
             )
             for base in loc_bases
-        ])
-        text.extend([
-            '\tkk_base_name="{}",'.format(base['LaunchSiteName'])
+        )
+        for base in loc_bases:
+            if 'RecoveryFactor' not in base:
+                print >> sys.stderr, 'WARNING: Location {} has no recovery factor for {}'.format(
+                    loc, 'helipad' if base['Category'] == 'Helipad' else 'runway',
+                )
+            if 'LaunchRefund' not in base:
+                print >> sys.stderr, 'WARNING: Location {} has no launch refund for {}'.format(
+                    loc, 'helipad' if base['Category'] == 'Helipad' else 'runway',
+                )
+        text.extend(
+            '\tlaunch_refund={},'.format(base['LaunchRefund'])
             for base in loc_bases
-        ])
+            if int(base.get('LaunchRefund', 0))
+        )
+        text.extend(
+            '\trecovery_factor={},'.format(base['RecoveryFactor'])
+            for base in loc_bases
+            if int(base.get('RecoveryFactor', 0))
+        )
+        text.extend('\tkk_base_name="{}",'.format(base['LaunchSiteName']) for base in loc_bases)
         text.append('),')
         print '\n'.join(text)
 
