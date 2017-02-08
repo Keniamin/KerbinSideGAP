@@ -76,7 +76,7 @@ def make_reward_table(options):
         if options.verbose > 0:
             print 'Calculating reward for {}'.format(contract)
         reward_str = '{} + ({} + {}) * Random(1.0, 1.15)'.format(
-            advance_funds, reward_funds, contract.refund_coefficient,
+            advance_funds, reward_funds, contract.refund_amount,
         )
         min_reward = utils.calculate_reward(contract, reward_str, calc_min=True)
         max_reward = utils.calculate_reward(contract, reward_str, calc_min=False)
@@ -197,7 +197,7 @@ def make_routes(options):
             ('failureFunds', '{} * Random(0.1, 0.25)'.format(advance_funds)),
             ('rewardReputation', reward_reputation),
             ('rewardFunds', '({} + {}) * Random(1.0, 1.15)'.format(
-                reward_funds, contract.refund_coefficient,
+                reward_funds, contract.refund_amount,
             )),
             ('rewardScience', 0),
         ])

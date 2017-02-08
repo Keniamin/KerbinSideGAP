@@ -124,7 +124,7 @@ class Contract(object):
         self.to_loc = None
 
     @property
-    def refund_coefficient(self):
+    def refund_amount(self):
         """
         Calculates amount of funds we must return to player
         to compensate launch-recover difference.
