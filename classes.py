@@ -1,7 +1,10 @@
 import re
 from random import randint
+from itertools import chain
 
 import utils
+import geometry
+from beacons import BEACONS
 
 ICONS_PATH = 'ContractPacks/KerbinSideGAP/Icons/'
 DEFAULT_AGENT = 'Kerbin Side GAP'
@@ -36,26 +39,27 @@ class Location(object):
 
     def __init__(
         self, name, description,
-        runway=None, helipad=None, aircraft_parking=None,
+        helipad=None, aircraft_launch=None, aircraft_parking=None,
         staff_spawn=None, vip_spawn=None,
         launch_refund=None, recovery_factor=None,
         kk_base_name=None,
+        runways=None,
     ):
         """
         @param name Short name of the location.
         @param description Full description of the location.
-        @param runway Runway waypoint (point where craft spawns when the player
-                      selects location's runway as a launch site).
-        @param helipad Helipad waypoint (point where craft spawns when the
-                       player selects location's helipad as a launch site).
+        @param helipad Point where craft spawns when the player selects
+                       location's helipad as a launch site.
+        @param aircraft_launch Point where craft spawns when the player selects
+                               location's runway as a launch site.
         @param aircraft_parking Point at which aircraft must be parked to
                                 complete the contract (helipad would be another
                                 one, if available). By default equals to the
-                                runway. Useful if you want to move marker to
-                                the part of the base which looks like a better
-                                place for parking (for example, at the KSC it
-                                may be a concrete pad between the runway and
-                                the Space Plane Hangar).
+                                aircraft_launch. Useful if you want to move
+                                marker to the part of the base which looks like
+                                a better place for parking (for example, at the
+                                KSC it may be a concrete pad between the runway
+                                and the Space Plane Hangar).
         @param staff_spawn Point around which staff Kerbals would appear for
                            the service contracts from this location (if any).
         @param vip_spawn Point at which VIP Kerbal would appear for the
@@ -67,29 +71,43 @@ class Location(object):
         @param kk_base_name Name of the launch site in the original .cfg file
                             for checking the base existence using KKCCExt. By
                             default equals to name.
+        @param runways List of location's runways. Each runway is described by
+                       a pair of it's endpoints. Endpoint is 4-tuple containing
+                       latitude, longitude, altitude (above sea level) and
+                       minimal glide slope angle required to go safely above
+                       obstacles while landing at this endpoint (or None, which
+                       means deny such landings absolutely). First endpoint of
+                       the first runway must corresponds aircraft_launch point.
         """
         self.name = name
         self.description = description
-        self.runway = runway
         self.helipad = helipad
+        self.aircraft_launch = aircraft_launch
         self.aircraft_parking = aircraft_parking
         self.staff_spawn = staff_spawn
         self.vip_spawn = vip_spawn
         self.launch_refund = launch_refund
         self.recovery_factor = recovery_factor
         self.kk_base_name = kk_base_name
+        self.runways = runways
         if self.launch_refund is None:
             self.launch_refund = 0
         if self.recovery_factor is None:
             self.recovery_factor = 50
         if self.aircraft_parking is None:
-            self.aircraft_parking = self.runway
+            self.aircraft_parking = self.aircraft_launch
         if self.kk_base_name is None:
             self.kk_base_name = self.name
+        if self.aircraft_launch is not None and self.runways is not None:
+            dist = geometry.distance(self.aircraft_launch, self.runways[0][0])
+            assert dist == min(
+                geometry.distance(self.aircraft_launch, pt)
+                for pt in chain.from_iterable(self.runways)
+            ), 'Mismatch aircraft_launch and runways for {}'.format(self.name)
 
     @property
     def position(self):
-        return self.helipad or self.runway
+        return self.helipad or self.aircraft_launch
 
     @property
     def alphanum_name(self):
@@ -104,21 +122,23 @@ class Contract(object):
     route_color = 'black' # default color of the route on the map
     max_simultaneous = 1 # default number of max simultaneous contracts of the type
     approx_launch_cost = 0 # default approximate cost of launch to calculate launch-recover refund
+    flight_level = 10000 # default altitude of the flight for Kramax AutoPilot flight plan
 
     @classmethod
     def get_flight_type(cls):
         contract_type = re.match(r'(.*)FlightContract', cls.__name__).group(1)
         return re.sub(r'([A-Z])', r' \1', contract_type).strip().lower()
 
-    def __init__(self, objective=None, special_notes=None):
+    def __init__(self, objective=None, special_notes=None, beacons=None):
         """
         @param objective Objective of the flight (displaying in description).
         @param special_notes Special notes about the flight (displaying under
                              objective as a separate paragraph).
-        @param additional_reward Additional reward funds (per contract).
+        @param beacons Beacons to visit when building flight plan.
         """
         self.objective = objective
         self.special_notes = special_notes
+        self.beacons = [(name, BEACONS[name]) for name in beacons] if beacons else []
         self.waypoints = []
         self.from_loc = None
         self.to_loc = None
@@ -144,7 +164,7 @@ class Contract(object):
         self.from_loc = from_loc
         self.to_loc = to_loc
         self.plane_allowed = (
-            self.from_loc.runway is not None and
+            self.from_loc.aircraft_launch is not None and
             self.to_loc.aircraft_parking is not None
         )
 
@@ -163,7 +183,7 @@ class Contract(object):
 
     def get_synopsis_notes(self):
         """Returns the list of the additional notes for contract synopsis."""
-        dist = utils.distance(self.from_loc, self.to_loc)
+        dist = utils.loc_distance(self.from_loc, self.to_loc)
         notes = [
             'Distance is {} km.'.format(round(dist, 2)),
         ]
@@ -241,9 +261,9 @@ class Contract(object):
     def make_takeoff_parameter(self):
         """Makes parameter that requires takeoff from the departure airport."""
         options = []
-        if self.from_loc.runway:
+        if self.from_loc.aircraft_launch:
             options.append(make_visit_waypoint(
-                self.waypoints.index(self.from_loc.runway), 20,
+                self.waypoints.index(self.from_loc.aircraft_launch), 20,
                 'Start the takeoff of your plane at the beginning of the runway of the {}'.format(self.from_loc.name),
                 once=True,
             ))
@@ -317,12 +337,12 @@ class PassengersContract(Contract):
     def get_waypoints(self):
         """Adds possible starting points to the list."""
         waypoints = super(PassengersContract, self).get_waypoints()
-        if self.from_loc.runway:
-            self.waypoints.append(self.from_loc.runway)
+        if self.from_loc.aircraft_launch:
+            self.waypoints.append(self.from_loc.aircraft_launch)
             waypoints.extend([[
                     ('name', self.from_loc.name + ' runway'),
                     ('icon', ICONS_PATH + 'Runway'),
-                ] + utils.point_to_params(self.from_loc.runway)
+                ] + utils.point_to_params(self.from_loc.aircraft_launch)
             ])
         if self.from_loc.helipad:
             self.waypoints.append(self.from_loc.helipad)
@@ -398,6 +418,7 @@ class ServiceFlightContract(TypedStaffContract):
     route_color = 'gold'
     max_simultaneous = 4
     approx_launch_cost = 10000
+    flight_level = 4000
     passengers_number = (2, 4) # for random selection (**both** included)
 
     def __init__(self, **kwargs):
@@ -423,7 +444,7 @@ class ServiceFlightContract(TypedStaffContract):
         return notes + super(ServiceFlightContract, self).get_synopsis_notes()
 
     def get_rewards(self):
-        reward = 20 * utils.distance(self.from_loc, self.to_loc)
+        reward = 20 * utils.loc_distance(self.from_loc, self.to_loc)
         return (0.2 * reward, 0.8 * reward, 0, 2)
 
     def get_data(self):
@@ -492,6 +513,7 @@ class BusinessFlightContract(FixedRewardContract, TypedStaffContract):
     """Describes a business flight."""
     route_color = 'tomato'
     max_simultaneous = 2
+    flight_level = 4000
     approx_launch_cost = 10000
     agent = 'Kerbal Aircraft Rent'
 
@@ -546,6 +568,7 @@ class TouristGroupFlightContract(FixedRewardContract, PassengersContract):
     """Describes a tourists charter flight."""
     route_color = 'limegreen'
     approx_launch_cost = 15000
+    flight_level = 3000
     agent = 'Kerbal Aircraft Rent'
     passengers_number = (3, 6) # for random selection (min included, max excluded)
 
@@ -581,11 +604,12 @@ class CharterFlightContract(PassengersContract):
     route_color = 'blue'
     max_simultaneous = 3
     approx_launch_cost = 30000
+    flight_level = 6000
     agent = 'Kerbin Charter Jet'
     passengers_number = (8, 17) # for random selection (min included, max excluded)
 
     def get_rewards(self):
-        dist = utils.distance(self.from_loc, self.to_loc)
+        dist = utils.loc_distance(self.from_loc, self.to_loc)
         return ('{} * @/passengersNum'.format(1.5 * dist), 0, 2, 4)
 
     def make_additional_crew_parameters(self):
@@ -600,11 +624,12 @@ class CommercialFlightContract(PassengersContract):
     route_color = 'skyblue'
     max_simultaneous = 4
     approx_launch_cost = 90000
+    flight_level = 8000
     agent = 'BlueSky Airways'
     passengers_number = (24, 65) # for random selection (min included, max excluded)
 
     def get_rewards(self):
-        dist = utils.distance(self.from_loc, self.to_loc)
+        dist = utils.loc_distance(self.from_loc, self.to_loc)
         half_reward = '{} * @/passengersNum'.format(0.6 * dist)
         return (half_reward, half_reward, 3, 5)
 

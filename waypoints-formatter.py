@@ -36,10 +36,10 @@ def main():
         if not 'name' in waypoint:
             continue
         wp_type = 'unknown'
-        if 'runway' in waypoint['name']:
-            wp_type = 'runway'
-        elif 'helipad' in waypoint['name']:
+        if 'helipad' in waypoint['name']:
             wp_type = 'helipad'
+        elif 'launch' in waypoint['name']:
+            wp_type = 'aircraft_launch'
         elif 'parking' in waypoint['name']:
             wp_type = 'aircraft_parking'
         elif (
