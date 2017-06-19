@@ -289,11 +289,11 @@ def make_route_map(options):
                 continue
             right_text = (pt[0] < 0.9 * utils.MAP_WIDTH)
             text_y_offset = 2.25
-            if beacon_name == 'ISLAND':
+            if beacon_name == 'ISLAND-NDB':
                 # I don't know how to fix overlapping of KSC better.
                 text_y_offset = 4.25
-            if beacon_name == 'SCORPION-MOUNTAINS':
-                # I don't know how to fix overlapping of LONELY-MOUNTAIN better.
+            if beacon_name == 'SCORPION-MOUNTAINS-NDB':
+                # I don't know how to fix overlapping of LONELY-MOUNTAIN-NDB better.
                 right_text = False
             displace = geometry.Vector(4 if right_text else -4, text_y_offset)
             route_map.add(route_map.text(
