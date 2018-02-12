@@ -135,7 +135,7 @@ LOCATIONS = [
     Location(
         "Kerbal Space Centre", "KSC, the largest launch base and main rocket science research centre of the Kerbin.",
         helipad=(-0.096749, -74.6199, Alt(111, 64.78)),
-        aircraft_launch=(-0.048602, -74.724445, Alt(5, 64.78)),
+        aircraft_launch=(-0.048742, -74.717311, Alt(5, 64.78)),
         aircraft_parking=(-0.056808, -74.620188, Alt(4, 64.78)),
         staff_spawn=(-0.060086, -74.64866, Alt(7, 64.78)),
         vip_spawn=(-0.161098, -74.7062, Alt(3, 64.78)),
@@ -144,6 +144,7 @@ LOCATIONS = [
         runways=[
             ((-0.048777, 285.299735, 70, 0), (-0.050059, 285.482482, 70, 0)),
         ],
+        aircraft_launch_allowed_distance=100,
     ),
     Location(
         "Kerbin's Bottom", "Small research centre with a radio telescope on the cold island called Kerbin's Bottom.",

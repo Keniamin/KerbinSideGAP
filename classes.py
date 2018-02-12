@@ -39,11 +39,14 @@ class Location(object):
 
     def __init__(
         self, name, description,
-        helipad=None, aircraft_launch=None, aircraft_parking=None,
+        helipad=None,
+        aircraft_launch=None,
+        aircraft_parking=None,
         staff_spawn=None, vip_spawn=None,
         launch_refund=None, recovery_factor=None,
         kk_base_name=None,
         runways=None,
+        aircraft_launch_allowed_distance=20,
     ):
         """
         @param name Short name of the location.
@@ -78,6 +81,12 @@ class Location(object):
                        obstacles while landing at this endpoint (or None, which
                        means deny such landings absolutely). First endpoint of
                        the first runway must corresponds aircraft_launch point.
+        @param aircraft_launch_allowed_distance Tolerance distance for launching
+                                              an aircraft from the runway (the
+                                              only meaningful use is KSC, that
+                                              have different aircraft_launch
+                                              points for different runway
+                                              upgrade levels).
         """
         self.name = name
         self.description = description
@@ -90,6 +99,7 @@ class Location(object):
         self.recovery_factor = recovery_factor
         self.kk_base_name = kk_base_name
         self.runways = runways
+        self.aircraft_launch_allowed_distance = aircraft_launch_allowed_distance
         if self.launch_refund is None:
             self.launch_refund = 0
         if self.recovery_factor is None:
@@ -263,7 +273,8 @@ class Contract(object):
         options = []
         if self.from_loc.aircraft_launch:
             options.append(make_visit_waypoint(
-                self.waypoints.index(self.from_loc.aircraft_launch), 20,
+                self.waypoints.index(self.from_loc.aircraft_launch),
+                self.from_loc.aircraft_launch_allowed_distance,
                 'Start the takeoff of your plane at the beginning of the runway of the {}'.format(self.from_loc.name),
                 once=True,
             ))

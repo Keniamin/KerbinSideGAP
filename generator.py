@@ -417,7 +417,7 @@ def make_routes(options):
         ('agent', DEFAULT_AGENT),
         ('maxSimultaneous', 8),
     ]
-    for contract_class in classes_set:
+    for contract_class in sorted(classes_set, key=(lambda cls: cls.__name__)):
         group_config = [
             ('minVersion', '1.21.0'),
             ('name', 'KerbinSideGap' + contract_class.__name__),
