@@ -12,10 +12,11 @@ The latest links that I found. Worked at the moment of publication with KSP v1.2
     Forum thread              | http://forum.kerbalspaceprogram.com/index.php?/topic/151818-12x-kerbal-konstructs-0989-12122016/
     Releases to download      | https://github.com/GER-Space/Kerbal-Konstructs/releases
  * KerbinSide
-    Forum thread              | http://forum.kerbalspaceprogram.com/index.php?/topic/74776-11-kerbin-side
-    Complete pack             | http://spacedock.info/mod/150/Kerbin-Side%20Complete
-    Skyways pack              | http://spacedock.info/mod/374/Kerbin-Side%20Skyways
-  * ContractConfigurator
+    Original forum thread     | http://forum.kerbalspaceprogram.com/index.php?/topic/74776-11-kerbin-side
+    Continued forum thread    | http://forum.kerbalspaceprogram.com/index.php?/topic/160099-122-13-kerbin-side-continued-14-05062017
+    Complete pack             | https://spacedock.info/mod/1347/Kerbin-Side%20Complete%20continued
+    Skyways pack              | https://spacedock.info/mod/1350/Kerbin-Side%20SkyWays
+ * ContractConfigurator
     Forum thread              | http://forum.kerbalspaceprogram.com/index.php?/topic/91625-12x-contract-configurator-v1222-2016-12-16/
     Releases to download      | https://github.com/jrossignol/ContractConfigurator/releases
  * NavUtilities
